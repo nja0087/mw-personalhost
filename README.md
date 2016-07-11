@@ -214,7 +214,7 @@ log.php:
 uploadFile.php
 ```
 <?php
-                if($_SERVER['REQUEST_METHOD']=='POST'){
+        if($_SERVER['REQUEST_METHOD']=='POST'){
                 $file_name = $_FILES['myFile']['name'];
                 $file_size = $_FILES['myFile']['size'];
                 $file_type = $_FILES['myFile']['type'];
@@ -229,8 +229,8 @@ uploadFile.php
                 }
 
                 move_uploaded_file($temp_name, $location.$file_name);
-                echo "https://nja.id.au:4321/uploads/Image/".$file_name;
-        }else{
+                echo "Uploaded";
+        } else{
                 echo "Error";
         }
 ?>
