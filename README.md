@@ -38,8 +38,6 @@ server {
         ssl_trusted_certificate /etc/ssl/private/full_chain.pem;
         add_header Strict-Transport-Security "max-age=31536000; preload";
 
-        index log.php;
-
         location ~ \.php$ {
                 include snippets/fastcgi-php.conf;
                 fastcgi_pass unix:/run/php/php7.0-fpm.sock;
@@ -90,13 +88,12 @@ password = mobilewitness_password
 dbname = mobilewitness_database
 ```
 
-log.php:
+uploadGPS.php:
 ```
 <?php
         class GeolocateController {
 
                 public function __construct() {
-                        // constructor. use to set things that always need to be in your class, eg dependencies, etc.
                 }
 
                 public function handleCoords($glob) {
@@ -141,30 +138,7 @@ log.php:
                                 //$current=file_get_contents($file);
                                 //$current.=$row['latitude'].$row['longitude'].$row['altitude'].$row['accuracy'].$row['time'].$row['date'].$row['serial']."\r\n";
                                 //file_put_contents($file,$current);
-
-                                $hash = hash("sha256",$row['latitude'].$row['longitude'].$row['altitude'].$row['accuracy'].$row['time'].$row['date'].$row['serial']);
-
-                                if (!($stmt = $con->prepare("UPDATE `recordings` SET hash=? WHERE time = '$dTime' AND date = '$dDate'"))) {
-                                        echo "Prepare failed: (" . $con->errno . ") " . $con->error;
-                                }
-                                if (!$stmt->bind_param("s", $hash)) {
-                                        echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
-                                }
-                                if (!$stmt->execute()) {
-                                        echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-                                }
-                                $stmt->close();
-
-                                //Now get row just written to hash
-                                $sql = "SELECT latitude,longitude,altitude,accuracy,date,time,serial FROM `recordings` WHERE time = '$dTime' AND date = '$dDate'";
-                                $result = $con->query($sql);
-                                $row = $result->fetch_assoc();
-
-                                //$file='vals.txt';
-                                //$current=file_get_contents($file);
-                                //$current.=$row['latitude'].$row['longitude'].$row['altitude'].$row['accuracy'].$row['time'].$row['date'].$row['serial']."\r\n";
-                                //file_put_contents($file,$current);
-
+                                
                                 $hash = hash("sha256",$row['latitude'].$row['longitude'].$row['altitude'].$row['accuracy'].$row['time'].$row['date'].$row['serial']);
 
                                 if (!($stmt = $con->prepare("UPDATE `recordings` SET hash=? WHERE time = '$dTime' AND date = '$dDate'"))) {
@@ -180,10 +154,10 @@ log.php:
                                 $con->close();
 
                                 //Second storage location is out of my control (and storing hashes as secondary server cannot infer information about it)
-                                $email_from = 'AUTHOREMAIL@BLAH.com';
+                                $email_from = 'nathan@nja.id.au';
                                 $email_subject = "GPS Rec";
                                 $email_body = "$hash \n".
-                                $to = "DESTINATIONEMAIL@BLAH.com";
+                                $to = "nathanjohnanderson@gmail.com";
                                 $this->SendEmail($email_from, $to, $email_subject, $email_body);
                                 return true;
                                 } else {
@@ -194,10 +168,10 @@ log.php:
                 private function SendEmail($email_from, $to, $subj, $body) {
                         $headers = "From: $email_from \r\n";
                         $headers .= "Reply-To: $email_from \r\n";
-                        //Comment out below to stop e-mail spam during testing
+                        //Comment out below to stop e-mail spam during android testing
                         //mail($to,$email_subject,$email_body,$headers);
                 }
-        }
+}
 
         $geo = new GeolocateController;
         if (!empty($_POST)) {
@@ -209,6 +183,7 @@ log.php:
                 echo "failure";
         }
 ?>
+
 ```
 
 uploadFile.php
