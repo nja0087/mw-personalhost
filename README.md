@@ -23,8 +23,8 @@ server {
         access_log      /var/log/nginx/mobilewitness/access.log;
         error_log       /var/log/nginx/mobilewitness/error.log warn;
 
-        client_max_body_size 20m;           #These directives control maximum file size upload allowed
-        client_body_buffer_size 20m;        #These directives control maximum file size upload allowed
+        client_max_body_size 50m;           #These directives control maximum file size upload allowed
+        client_body_buffer_size 50m;        #These directives control maximum file size upload allowed
 
         server_tokens off;
         ssl_protocols TLSv1.2;
