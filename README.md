@@ -70,11 +70,11 @@ CREATE TABLE `recordings` (
 Folder structure for scripts is as follows:
 ```
 +document root
-|-config.ini      (database access ini file outside of www-data readable folder)
+|-config.ini            (database access ini file outside of www-data readable folder)
 |-html
- |-log.php        (write gps coordinates to database with optional hash e-mailing)
- |-uploadFile.php (controls where uploaded files are saved to)
- |-uploads        (these folders store uploaded files)
+ |-uploadGPS.php        (write gps coordinates to database with optional hash e-mailing)
+ |-uploadFile.php       (controls where uploaded files are saved to)
+ |-uploads              (these folders store uploaded files)
   |-Audio
   |-Image
   |-Video
