@@ -154,10 +154,10 @@ uploadGPS.php:
                                 $con->close();
 
                                 //Second storage location is out of my control (and storing hashes as secondary server cannot infer information about it)
-                                $email_from = 'nathan@nja.id.au';
+                                $email_from = 'AUTHOR@DOMAIN.com';
                                 $email_subject = "GPS Rec";
                                 $email_body = "$hash \n".
-                                $to = "nathanjohnanderson@gmail.com";
+                                $to = "DESTINATION@DOMAIN.com";
                                 $this->SendEmail($email_from, $to, $email_subject, $email_body);
                                 return true;
                                 } else {
