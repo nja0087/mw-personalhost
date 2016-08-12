@@ -93,9 +93,6 @@ uploadGPS.php:
 <?php
         class GeolocateController {
 
-                public function __construct() {
-                }
-
                 public function handleCoords($glob) {
                         if (isset($glob['latitude'], $glob['longitude'], $glob['altitude'], $glob['time'], $glob['serial'], $glob['accuracy'])) {
 
