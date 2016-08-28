@@ -20,6 +20,9 @@ server {
         root /var/www/mobilewitness/html;   #Choose web file locations
         server_name SERVER_NAME;            #Server domain goes here
         
+        auth_basic "Restricted";
+        auth_basic_user_file /etc/nginx/.htpasswd;      #Nginx Auth file goes here
+        
         access_log      /var/log/nginx/mobilewitness/access.log;
         error_log       /var/log/nginx/mobilewitness/error.log warn;
 
