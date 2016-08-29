@@ -128,48 +128,8 @@ uploadGPS.php:
                                         echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
                                 }
                                 $stmt->close();
-
-                                //Now get row just written to hash
-                                $sql = "SELECT latitude,longitude,altitude,accuracy,date,time,serial FROM `recordings` WHERE time = '$dTime' AND date = '$dDate'";
-                                $result = $con->query($sql);
-                                $row = $result->fetch_assoc();
-
-                                //$file='vals.txt';
-                                //$current=file_get_contents($file);
-                                //$current.=$row['latitude'].$row['longitude'].$row['altitude'].$row['accuracy'].$row['time'].$row['date'].$row['serial']."\r\n";
-                                //file_put_contents($file,$current);
-                                
-                                $hash = hash("sha256",$row['latitude'].$row['longitude'].$row['altitude'].$row['accuracy'].$row['time'].$row['date'].$row['serial']);
-
-                                if (!($stmt = $con->prepare("UPDATE `recordings` SET hash=? WHERE time = '$dTime' AND date = '$dDate'"))) {
-                                        echo "Prepare failed: (" . $con->errno . ") " . $con->error;
-                                }
-                                if (!$stmt->bind_param("s", $hash)) {
-                                        echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
-                                }
-                                if (!$stmt->execute()) {
-                                        echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-                                }
-
                                 $con->close();
-
-                                //Second storage location is out of my control (and storing hashes as secondary server cannot infer information about it)
-                                $email_from = 'AUTHOR@DOMAIN.com';
-                                $email_subject = "GPS Rec";
-                                $email_body = "$hash \n".
-                                $to = "DESTINATION@DOMAIN.com";
-                                $this->SendEmail($email_from, $to, $email_subject, $email_body);
-                                return true;
-                                } else {
-                                return false;
                         }
-                }
-
-                private function SendEmail($email_from, $to, $subj, $body) {
-                        $headers = "From: $email_from \r\n";
-                        $headers .= "Reply-To: $email_from \r\n";
-                        //Comment out below to stop e-mail spam during android testing
-                        //mail($to,$email_subject,$email_body,$headers);
                 }
 }
 
