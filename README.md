@@ -79,6 +79,8 @@ uploadFile.php
                         $location = "uploads/Image/";
                 } else if ($file_type == 'video/mp4'){
                         $location = "uploads/Video/";
+                }else if ($file_type == 'text/plain'){
+                        $location = "uploads/GPS/";
                 }
 
                 move_uploaded_file($temp_name, $location.$file_name);
