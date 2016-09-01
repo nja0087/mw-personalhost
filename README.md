@@ -6,10 +6,10 @@ NOTE: Curl script to automate all these steps should probably be done to help pe
 
 ## Prerequisites
 
-A LEMP stack (or similar) is required for hosting. This guide has been prepared with Debian Testing (11 July 16), Nginx 1.10.1, MariaDB 10.1.15, & PHP 7.0.8.
+A LEMP stack (or similar) is required for hosting. This guide has been prepared with Debian Testing (11 July 16), Nginx 1.10.1 & PHP 7.0.8.
 
 ###### 1. OS Dependencies
-Debian/Ubuntu APT: `sudo apt-get install nginx-full;  sudo apt-get install mariadb-server; sudo apt-get install php7.0-fpm; sudo apt-get install php7.0-mysql;`
+Debian/Ubuntu APT: `sudo apt-get install nginx-full; sudo apt-get install php7.0-fpm`
 
 ###### 2. Nginx Web Server Config
 /etc/nginx/sites-available/
@@ -49,101 +49,19 @@ server {
 }
 ```
 
-###### 3. MariaDB (MySQL) Statements
-
-```
-CREATE TABLE `recordings` (
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `latitude` decimal(10,6) NOT NULL,
-  `longitude` decimal(10,6) NOT NULL,
-  `altitude` decimal(10,6) NOT NULL,
-  `accuracy` float NOT NULL,
-  `time` time NOT NULL,
-  `date` date NOT NULL,
-  `serial` varchar(45) NOT NULL,
-  `hash` char(64) DEFAULT NULL,
-  PRIMARY KEY (`timestamp`),
-  UNIQUE KEY `uTime_UNIQUE` (`timestamp`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-```
-
-###### 4. PHP Scripts
+###### 3. PHP Scripts
 /var/www/mobilewitness
 
 Folder structure for scripts is as follows:
 ```
 +document root
-|-config.ini            (database access ini file outside of www-data readable folder)
 |-html
- |-uploadGPS.php        (write gps coordinates to database with optional hash e-mailing)
  |-uploadFile.php       (controls where uploaded files are saved to)
  |-uploads              (these folders store uploaded files)
   |-Audio
   |-Image
   |-Video
-```
-
-config.ini:
-```
-[database]
-username = mobilewitness_user
-password = mobilewitness_password
-dbname = mobilewitness_database
-```
-
-uploadGPS.php:
-```
-<?php
-        class GeolocateController {
-
-                public function handleCoords($glob) {
-                        if (isset($glob['latitude'], $glob['longitude'], $glob['altitude'], $glob['time'], $glob['serial'], $glob['accuracy'])) {
-
-                                $config = parse_ini_file('../config.ini');
-                                $username = $config['username'];
-                                $password = $config['password'];
-                                $dbname = $config['dbname'];
-                                $host="localhost";
-
-                                $latitude=$glob["latitude"];
-                                $longitude=$glob["longitude"];
-                                $altitude=$glob["altitude"];
-                                $accuracy=$glob["accuracy"];
-                                $time=$glob["time"];
-                                $dDate=substr($time,0,10);
-                                $dTime=substr($time,11,8);
-                                $serial=$glob["serial"];
-
-                                $con = new mysqli($host,$username,$password,$dbname);
-                                if ($con->connect_errno) {
-                                        echo "Failed to connect to MySQL: (" . $con->connect_errno . ") " . $con->connect_error;
-                                }
-                                if (!($stmt = $con->prepare("INSERT INTO `recordings` (latitude,longitude,altitude,accuracy,time,date,serial) VALUES (?,?,?,?,?,?,?)"))) {
-                                        echo "Prepare failed: (" . $con->errno . ") " . $con->error;
-                                }
-                                if (!$stmt->bind_param("dddssss", $latitude,$longitude,$altitude,$accuracy,$dTime,$dDate,$serial)) {
-                                        echo "Binding parameters failed: (" . $stmt->errno . ") " . $stmt->error;
-                                }
-                                if (!$stmt->execute()) {
-                                        echo "Execute failed: (" . $stmt->errno . ") " . $stmt->error;
-                                }
-                                $stmt->close();
-                                $con->close();
-                        }
-                }
-}
-
-        $geo = new GeolocateController;
-        if (!empty($_POST)) {
-        $response = $geo->handleCoords($_POST);
-        }
-        if ($response) {
-                echo "success";
-                } else {
-                echo "failure";
-        }
-?>
-
+  |-GPS
 ```
 
 uploadFile.php
