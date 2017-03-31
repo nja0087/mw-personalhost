@@ -90,3 +90,4 @@ uploadFile.php
         }
 ?>
 ```
+Note: You will have to set your /etc/php/7.1/fpm/php.ini to suitable values. E.g upload_max_filesize = 128M & post_max_size = 128M.
