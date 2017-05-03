@@ -62,6 +62,7 @@ Folder structure for scripts is as follows:
   |-Image
   |-Video
   |-GPS
+  |-Phone
 ```
 
 uploadFile.php
@@ -81,6 +82,8 @@ uploadFile.php
                         $location = "uploads/Video/";
                 }else if ($file_type == 'text/plain'){
                         $location = "uploads/GPS/";
+                } else if ($file_type == 'audio/AMR'){
+                        $location = "uploads/Phone/";
                 }
 
                 move_uploaded_file($temp_name, $location.$file_name);
